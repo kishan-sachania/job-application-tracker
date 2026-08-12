@@ -118,6 +118,7 @@ export const ApplicationList: React.FC<ApplicationListProps> = ({
           </thead>
           <tbody className="divide-y divide-slate-800/80">
             {applications.map((app) => {
+              console.log(app)
               const dueAlert = isFollowUpDue(app);
 
               return (

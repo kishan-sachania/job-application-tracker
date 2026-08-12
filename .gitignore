@@ -2,20 +2,18 @@
 node_modules/
 **/node_modules/
 
-# Environment files
-.env
-.env.local
-.env.*.local
-*.env
-**/.env
-
 # Build outputs
 dist/
-build/
-*.log
+**/dist/
 
-# IDE & OS
+# Environment files (ignore all .env files EXCEPT .env.example)
+*.env
+*.env.*
+**/*.env
+**/*.env.*
+!*.env.example
+!**/*.env.example
+
+# OS files
 .DS_Store
-Thumbs.db
-.vscode/
-.idea/
+**/.DS_Store

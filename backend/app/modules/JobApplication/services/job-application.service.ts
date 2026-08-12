@@ -41,7 +41,10 @@ export const getAllJobApplications = async (
     ];
 
     const result = await JobApplication.aggregate(pipeline);
-    return result;
+    return result.map(({ _id, __v, ...rest }: any) => ({
+        id: _id ? _id.toString() : rest.id,
+        ...rest,
+    }));
 };
 
 
