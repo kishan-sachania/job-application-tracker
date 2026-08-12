@@ -29,6 +29,14 @@ app.use(
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.json({ message: "Job Application Tracker API Server Running" });
+});
+
+app.get("/api", (req, res) => {
+  res.json({ message: "Job Application Tracker API v2" });
+});
+
 app.use("/api/auth", userRoutes);
 app.use("/api/applications", jobRoutes);
 
