@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
-import { IJobApplication, JobApplication } from '../models/job-application-model.js';
-import { User } from '../../User/models/user.model.js';
+import { IJobApplication, JobApplication } from '../../../models/job-application-model.js';
+import { CustomError } from '../../../error-formates/error-formates.js';
 
 export interface GetApplicationsOptions {
     status?: string;
@@ -9,24 +9,6 @@ export interface GetApplicationsOptions {
     order?: 'asc' | 'desc';
 }
 
-export class CustomError extends Error {
-    statusCode: number;
-    constructor(message: string, statusCode: number) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-}
-
-export const getUserVerification = async (userId: string) => {
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new CustomError('User not found', 404);
-    }
-
-    if (!(user._id.toString() === userId)) {
-        throw new CustomError('Unauthorized to update this application', 403);
-    }
-}
 
 // GET
 export const getAllJobApplications = async (
@@ -39,11 +21,11 @@ export const getAllJobApplications = async (
         userId: new Types.ObjectId(userId)
     }
 
-    if (status) {
+    if (status && status.trim() !== "") {
         matchStage.status = status;
     }
 
-    if (search || search?.trim() === "") {
+    if (search && search.trim() !== "") {
         matchStage.$or = [
             { company: { $regex: search.trim(), $options: 'i' } },
             { role: { $regex: search.trim(), $options: 'i' } }
@@ -51,7 +33,7 @@ export const getAllJobApplications = async (
     }
 
     const sortOrder = order === 'asc' ? 1 : -1;
-    const sortStage: Record<string, 1 | -1> = { [sort]: sortOrder };
+    const sortStage: Record<string, 1 | -1> = { [sort || 'appliedDate']: sortOrder };
 
     const pipeline = [
         { $match: matchStage },
@@ -82,19 +64,26 @@ export const registerApplication = async (userId: string, data: IJobApplication)
     return jobApplication;
 }
 
-export const updateApplication = async (id: string, userId: string, data: IJobApplication) => {
+export const updateApplication = async (id: string, userId: string, data: Partial<IJobApplication>) => {
     const job = await JobApplication.findOne({ _id: id });
     if (!job) {
         throw new CustomError('Application not found', 404);
     }
-    getUserVerification(userId);
-    await JobApplication.updateOne({ _id: id }, { $set: data })
+    if (job.userId.toString() !== userId) {
+        throw new CustomError('Unauthorized to update this application', 403);
+    }
+    await JobApplication.updateOne({ _id: id }, { $set: data });
+    return await JobApplication.findById(id);
 }
 
 
 export const deleteApplication = async (id: string, userId: string) => {
-
-
-    getUserVerification(userId);
-    await JobApplication.deleteOne({ _id: id })
+    const job = await JobApplication.findOne({ _id: id });
+    if (!job) {
+        throw new CustomError('Application not found', 404);
+    }
+    if (job.userId.toString() !== userId) {
+        throw new CustomError('Unauthorized to delete this application', 403);
+    }
+    await JobApplication.deleteOne({ _id: id });
 }

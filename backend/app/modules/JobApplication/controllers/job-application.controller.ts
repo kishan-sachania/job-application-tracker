@@ -1,7 +1,8 @@
 
 import { Request, Response } from "express";
-import { CustomError, getAllJobApplications, registerApplication, updateApplication } from "../services/job-application.service.js";
+import { deleteApplication, getAllJobApplications, registerApplication, updateApplication } from "../services/job-application.service.js";
 import ApiResponse from "../../../../utils/api-response.js";
+import { CustomError } from "../../../error-formates/error-formates.js";
 
 const normalizeUserId = (req: Request) => {
     const header = req.headers['x-user-id']
@@ -12,7 +13,7 @@ const normalizeUserId = (req: Request) => {
 const getParamsId = (req: Request) => {
     const id = req.params.id;
     if (!id) {
-        throw new Error("Job ID is required");
+        throw new CustomError("Job ID is required", 400);
     }
     const paramsId = Array.isArray(id) ? id[0] : id;
     return paramsId;
@@ -50,8 +51,8 @@ const applyToJobApplication = async (req: Request, res: Response) => {
             return ApiResponse.error(res, "Missing user ID", 400);
         }
         const body = req.body;
-        await registerApplication(userId, body);
-        ApiResponse.success(res, "Application applied successfully", 201);
+        const newApplication = await registerApplication(userId, body);
+        ApiResponse.success(res, "Application applied successfully", 201, newApplication);
     } catch (error) {
         if (error instanceof CustomError) {
             return ApiResponse.error(res, error.message, error.statusCode);
@@ -68,8 +69,8 @@ const updateJobApplicationStatus = async (req: Request, res: Response) => {
             return ApiResponse.error(res, "Missing user ID", 400);
         }
         const body = req.body;
-        await updateApplication(id,userId, body);
-        ApiResponse.success(res, "Application applied successfully", 201);
+        const updated = await updateApplication(id, userId, body);
+        ApiResponse.success(res, "Application updated successfully", 200, updated);
     } catch (error) {
         if (error instanceof CustomError) {
             return ApiResponse.error(res, error.message, error.statusCode);
@@ -80,9 +81,18 @@ const updateJobApplicationStatus = async (req: Request, res: Response) => {
 
 const deleteJobApplication = async (req: Request, res: Response) => {
     try {
-
+        const userId = normalizeUserId(req);
+        const id = getParamsId(req);
+        if (!userId) {
+            return ApiResponse.error(res, "Missing user ID", 400);
+        }
+        await deleteApplication(id, userId);
+        ApiResponse.success(res, "Application deleted successfully", 200);
     } catch (error) {
-
+        if (error instanceof CustomError) {
+            return ApiResponse.error(res, error.message, error.statusCode);
+        }
+        return ApiResponse.error(res, "Internal server error", 500);
     }
 }
 

@@ -7,12 +7,14 @@ dotenv.config();
 if (!process.env.MONGO_URI) throw new Error("MONGO_URI is not provided");
 
 // JWT check
-if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not provided");
+if (!process.env.JWT_ACCESS_SECRET) throw new Error("JWT_ACCESS_SECRET is not provided");
+if (!process.env.JWT_REFRESH_SECRET) throw new Error("JWT_REFRESH_SECRET is not provided");
 
 const config = {
     MONGO_URL: process.env.MONGO_URI,
     PORT: process.env.PORT || 3000,
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     DB_NAME: process.env.DB_NAME || "job_tracker",
 };
 
