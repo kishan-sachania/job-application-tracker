@@ -33,7 +33,7 @@ const userSchema = new Schema<IUser>({
 });
 
 userSchema.set("toJSON", {
-  transform: (doc, ret: Record<string, any>) => {
+  transform: (doc: any, ret: Record<string, any>) => {
     ret.id = ret._id;
     delete ret.password;
     delete ret.__v;

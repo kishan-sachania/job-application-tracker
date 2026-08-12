@@ -54,7 +54,7 @@ const jobApplicationSchema = new Schema<IJobApplication>({
 }, { timestamps: true })
 
 jobApplicationSchema.set("toJSON", {
-  transform: (doc, ret: Record<string, any>) => {
+  transform: (doc: any, ret: Record<string, any>) => {
     ret.id = ret._id;
     delete ret.__v;
   },
