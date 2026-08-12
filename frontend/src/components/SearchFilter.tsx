@@ -1,0 +1,129 @@
+import React from "react";
+import { Search, X, ArrowUp, ArrowDown, Plus } from "lucide-react";
+import { Status } from "../types";
+
+interface SearchFilterProps {
+  searchTerm: string;
+  statusFilter: string;
+  sortField: string;
+  onSearchChange: (value: string) => void;
+  sortOrder: "asc" | "desc";
+  onStatusChange: (status: string) => void;
+  onSortFieldChange: (field: string) => void;
+  onSortOrderChange: (order: "asc" | "desc") => void;
+  onAddNew: () => void;
+}
+
+export const SearchFilter: React.FC<SearchFilterProps> = ({
+  searchTerm,
+  onSearchChange,
+  statusFilter,
+  sortField,
+  sortOrder,
+  onStatusChange,
+  onSortFieldChange,
+  onSortOrderChange,
+  onAddNew,
+}) => {
+  const hasActiveFilters = searchTerm !== "" || statusFilter !== "";
+
+  return (
+    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 mb-6 shadow-xl backdrop-blur-md">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        {/* Search Bar */}
+        <div className="relative flex-1">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <Search className="w-4 h-4" />
+          </div>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search by company or role..."
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 border border-slate-700/80 rounded-md text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition duration-150"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => onSearchChange("")}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Status Dropdown */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="w-full sm:w-auto">
+            <select
+              value={statusFilter}
+              onChange={(e) => onStatusChange(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-700/80 rounded-md px-3.5 py-2.5 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            >
+              <option value="">All Statuses</option>
+              {Object.values(Status).map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sort Field & Order */}
+          <div className="flex items-center gap-2">
+            <select
+              value={sortField}
+              onChange={(e) => onSortFieldChange(e.target.value)}
+              className="bg-slate-800 border border-slate-700/80 rounded-md px-3 py-2.5 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            >
+              <option value="appliedDate">Sort: Applied Date</option>
+              <option value="company">Sort: Company</option>
+              <option value="role">Sort: Role</option>
+              <option value="nextFollowUpDate">Sort: Follow-up Date</option>
+            </select>
+
+            <button
+              onClick={() =>
+                onSortOrderChange(sortOrder === "asc" ? "desc" : "asc")
+              }
+              title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
+              className="flex items-center gap-1.5 px-3 py-2.5 bg-slate-800 border border-slate-700/80 rounded-md text-slate-200 hover:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
+            >
+              {sortOrder === "asc" ? (
+                <>
+                  <ArrowUp className="w-4 h-4" /> Asc
+                </>
+              ) : (
+                <>
+                  <ArrowDown className="w-4 h-4" /> Desc
+                </>
+              )}
+            </button>
+          </div>
+
+          {hasActiveFilters && (
+            <button
+              onClick={() => {
+                onSearchChange("");
+                onStatusChange("");
+              }}
+              className="px-3 py-2 text-xs font-medium text-slate-400 hover:text-rose-400 transition cursor-pointer"
+            >
+              Reset Filters
+            </button>
+          )}
+
+          {/* Add New Application Button */}
+          <button
+            onClick={onAddNew}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-md shadow-lg shadow-blue-500/20 transition cursor-pointer"
+          >
+            <Plus className="w-4 h-4" /> Add Application
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SearchFilter;

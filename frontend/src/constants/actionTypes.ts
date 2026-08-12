@@ -1,0 +1,8 @@
+export const ACTION_TYPES = {
+  SET_ALL: "SET_ALL",
+  ADD: "ADD",
+  UPDATE: "UPDATE",
+  DELETE: "DELETE",
+  SET_LOADING: "SET_LOADING",
+  SET_ERROR: "SET_ERROR",
+} as const;
