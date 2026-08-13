@@ -22,7 +22,6 @@ Track your job applications, monitor response rates, manage follow-up deadlines,
   - Track Company, Role, Status (`Applied`, `Screening`, `Interview`, `Offer`, `Closed`), Location (`remote`, `onsite`, `hybrid`), Applied Date, Next Follow-up Date, Salary Expectations, and Notes.
 - 🔍 **Search & Filtering**: Search applications by company or role, filter by application status, sort by date/salary, and navigate with server-side pagination.
 - 🌓 **Theme Support**: Seamless Dark Mode and Light Mode switching powered by React context.
-- 📬 **Postman Collection Included**: Complete Postman v2.1 collection with automated scripts for API testing.
 
 ---
 
@@ -62,7 +61,6 @@ job-application-tracker/
 │   │   └── modules/                          # Auth & JobApplication modules (controllers, routes, services)
 │   ├── config/                               # MongoDB & environment config
 │   └── package.json
-├── Job_Application_Tracker.postman_collection.json  # Postman API Collection
 ├── package.json                               # Workspace root configuration
 └── README.md                                  # Project documentation
 ```
