@@ -1,6 +1,6 @@
 # 💼 Job Application Tracker
 
-A full-stack job application tracking and management web application built with **React 19**, **TypeScript**, **TailwindCSS**, **Node.js**, **Express**, and **MongoDB**. 
+A full-stack **MERN** (MongoDB, Express, React 19, Node.js) job application tracking and management web application built with **TypeScript** and **TailwindCSS**.
 
 Track your job applications, monitor response rates, manage follow-up deadlines, and analyze recruitment metrics with a modern UI.
 
@@ -13,146 +13,138 @@ Track your job applications, monitor response rates, manage follow-up deadlines,
 
 ---
 
-## ✨ Features
+## 📖 Project Overview
 
-- 🔐 **Authentication System**: User registration and login using JWT access & refresh tokens stored safely in `localStorage` with password hashing (`scrypt`).
-- 📊 **Dashboard & Metrics**: Overview analytics featuring total applications, status breakdown, response rate calculations, and overdue follow-up alerts.
-- 📋 **Job Application Management (CRUD)**:
-  - Create, view, update, and delete job applications.
-  - Track Company, Role, Status (`Applied`, `Screening`, `Interview`, `Offer`, `Closed`), Location (`remote`, `onsite`, `hybrid`), Applied Date, Next Follow-up Date, Salary Expectations, and Notes.
-- 🔍 **Search & Filtering**: Search applications by company or role, filter by application status, sort by date/salary, and navigate with server-side pagination.
-- 🌓 **Theme Support**: Seamless Dark Mode and Light Mode switching powered by React context.
-- 📬 **Postman Collection Included**: Complete Postman v2.1 collection with automated scripts for API testing.
+The **Job Application Tracker** is designed to streamline job hunting by providing job seekers with a centralized dashboard to log, manage, and analyze their job applications.
 
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework**: React 19 + TypeScript + Vite
-- **Styling**: TailwindCSS v4
-- **Routing**: React Router v7
-- **HTTP Client**: Axios with automated 401 refresh token interceptors
-- **Icons**: Lucide React
-
-### Backend
-- **Runtime**: Node.js + Express 5
-- **Language**: TypeScript
-- **Database**: MongoDB + Mongoose 9
-- **Authentication**: JWT (JSON Web Tokens) with crypto password hashing
+### Key Capabilities & Architecture
+- **Authentication**: JWT authentication using access tokens and refresh tokens stored safely in `localStorage`. Includes guest/protected route guards.
+- **Job Application CRUD**: Create, read, update, and delete job applications with fields for company, role, status (`Applied`, `Screening`, `Interview`, `Offer`, `Closed`), location type (`remote`, `onsite`, `hybrid`), applied date, follow-up date, salary expectation, and notes.
+- **Analytics & Dashboard**: Real-time stats calculation including total applications count, status breakdown, response rate percentages, and overdue follow-up indicators.
+- **Filtering & Search**: Server-supported filtering by status, search by company/role, sorting by date, and pagination.
+- **Theme Switcher**: Dark/Light mode theme switching.
 
 ---
 
-## 📁 Repository Structure
+## 🛠️ Tech Stack (MERN + TypeScript)
 
-```
-job-application-tracker/
-├── client/                                    # Frontend React application
-│   ├── src/
-│   │   ├── api/                              # Axios instance & API client modules
-│   │   ├── components/                       # UI components (Form, List, Stats, etc.)
-│   │   ├── context/                          # Auth & Theme context providers
-│   │   ├── hooks/                            # Custom React hooks (useApplications)
-│   │   ├── pages/                            # Page components (Login, Register, Dashboard)
-│   │   └── types/                            # TypeScript interfaces
-│   └── package.json
-├── server/                                    # Backend Express API service
-│   ├── app/
-│   │   ├── models/                           # Mongoose models (User, JobApplication)
-│   │   └── modules/                          # Auth & JobApplication modules (controllers, routes, services)
-│   ├── config/                               # MongoDB & environment config
-│   └── package.json
-├── Job_Application_Tracker.postman_collection.json  # Postman API Collection
-├── package.json                               # Workspace root configuration
-└── README.md                                  # Project documentation
-```
+| Layer | Technologies Used |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite, TailwindCSS v4, React Router v7, Lucide Icons, Axios |
+| **Backend** | Node.js, Express 5, TypeScript |
+| **Database** | MongoDB & Mongoose 9 |
+| **Authentication** | JWT (JSON Web Tokens), `crypto` scryptSync password hashing |
 
 ---
 
-## 🚀 Local Setup & Installation
+## ⚙️ Prerequisites & Setup Steps
 
-### Prerequisites
-- **Node.js** (v18.x or higher)
-- **npm** (v9.x or higher)
-- **MongoDB Atlas** database connection string (or local MongoDB instance)
+Before running the application locally, ensure you have the following installed:
+
+1. **Node.js**: `v18.x` or higher (`node -v`)
+2. **npm**: `v9.x` or higher (`npm -v`)
+3. **MongoDB Database**: Choose either option below:
+   - **Option A (MongoDB Atlas - Cloud)**: Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas), create a database user, and obtain your MongoDB URI connection string (`mongodb+srv://<username>:<password>@<cluster>.mongodb.net/job_tracker`).
+   - **Option B (Local MongoDB Service)**: Install [MongoDB Community Edition](https://www.mongodb.com/try/download/community) locally and start the service (`mongodb://localhost:27017/job_tracker`).
 
 ---
+
+## 💻 Step-by-Step Run Instructions
 
 ### Step 1: Clone the Repository
-
 ```bash
 git clone https://github.com/kishan-sachania/job-application-tracker.git
 cd job-application-tracker
 ```
 
----
-
 ### Step 2: Install Dependencies
-
-Install root workspace dependencies and client/server packages:
-
+Run the workspace command to install all packages for both server and client:
 ```bash
 npm run install:all
 ```
-
-*Or install individually:*
-
-```bash
-# Install root
-npm install
-
-# Install server
-cd server && npm install && cd ..
-
-# Install client
-cd client && npm install && cd ..
-```
-
----
+*(Alternatively: `cd server && npm install` and `cd ../client && npm install`)*
 
 ### Step 3: Configure Environment Variables
+Create `.env` files in both `server/` and `client/` directories as described in the section below.
 
-#### 1. Server Environment Configuration
-Create a `.env` file inside the `server/` directory:
+### Step 4: Run the Application Locally
 
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/job_tracker?retryWrites=true&w=majority
-JWT_ACCESS_SECRET=your_jwt_access_secret_key_here
-JWT_REFRESH_SECRET=your_jwt_refresh_secret_key_here
-CLIENT_URL=http://localhost:5173
-```
-
-#### 2. Client Environment Configuration
-Create a `.env` file inside the `client/` directory:
-
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-```
-
----
-
-### Step 4: Run the Development Server
-
-Start both the backend server and frontend client concurrently:
-
+#### Option A: Concurrent Run (Recommended)
+Run both backend and frontend simultaneously from the root directory:
 ```bash
 npm run dev
 ```
 
-- **Frontend App**: [http://localhost:5173](http://localhost:5173)
-- **Backend API**: [http://localhost:5000/api](http://localhost:5000/api)
+#### Option B: Separate Terminal Run
+- **Terminal 1 (Backend Server)**:
+  ```bash
+  npm run server
+  ```
+  *(Runs backend on http://localhost:3000)*
+
+- **Terminal 2 (Frontend Client)**:
+  ```bash
+  npm run client
+  ```
+  *(Runs frontend on http://localhost:5173)*
 
 ---
 
-## 🧪 Running API Tests via Postman
+## 🔑 Environment Variables Explanation
 
-1. Open **Postman**.
-2. Click **Import** and select `Job_Application_Tracker.postman_collection.json` located in the root directory.
-3. Run **`1. Register User`** or **`2. Login User`**. The collection test script automatically saves `accessToken`, `refreshToken`, `userId`, and `applicationId` into collection variables for all subsequent requests.
+### 1. Server Environment Variables (`server/.env`)
+
+| Variable | Required | Description | Example |
+| :--- | :---: | :--- | :--- |
+| `PORT` | Optional | Port on which Express server listens (defaults to `3000`). | `3000` |
+| `MONGO_URI` | **Yes** | Connection string for MongoDB database instance. | `mongodb+srv://user:pass@cluster.mongodb.net/job_tracker` |
+| `JWT_ACCESS_SECRET` | **Yes** | Secret key used to sign JWT access tokens (short-lived). | `super_secret_access_key` |
+| `JWT_REFRESH_SECRET` | **Yes** | Secret key used to sign JWT refresh tokens (long-lived). | `super_secret_refresh_key` |
+| `CLIENT_URL` | Optional | Allowed origin URL for CORS policy configuration. | `http://localhost:5173` |
+
+### 2. Client Environment Variables (`client/.env`)
+
+| Variable | Required | Description | Example |
+| :--- | :---: | :--- | :--- |
+| `VITE_API_BASE_URL` | **Yes** | Base API URL pointing to Express backend service. | `http://localhost:3000/api` |
+
+---
+
+## ⚠️ Known Limitations & Assumptions
+
+1. **Email Verification**: User registration creates accounts immediately without sending confirmation emails.
+2. **Password Recovery**: Forgot Password / Reset Password flow is not currently implemented.
+3. **Session Storage**: Tokens are stored in `localStorage` for cross-origin CORS compatibility (e.g. Vercel frontend to Render backend).
+4. **Rate Limiting**: API rate limiting (e.g. express-rate-limit) is not enforced on auth endpoints.
+5. **Render Cold Start**: Free tier deployment on Render spins down after inactivity; initial request may take ~30 seconds to wake up.
+
+---
+
+## 📁 Repository Directory Structure
+
+```
+job-application-tracker/
+├── client/                                    # Frontend React application
+│   ├── src/
+│   │   ├── api/                              # Axios client & API endpoints
+│   │   ├── components/                       # UI components (Form, List, Stats, etc.)
+│   │   ├── context/                          # Auth & Theme context providers
+│   │   ├── hooks/                            # Custom React hooks
+│   │   ├── pages/                            # Pages (Login, Register, Dashboard)
+│   │   └── types/                            # TypeScript types/interfaces
+│   └── package.json
+├── server/                                    # Backend Express API service
+│   ├── app/
+│   │   ├── models/                           # Mongoose models (User, JobApplication)
+│   │   └── modules/                          # Auth & JobApplication modules
+│   ├── config/                               # Database & env config
+│   └── package.json
+├── package.json                               # Workspace root configuration
+└── README.md                                  # Documentation
+```
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **ISC License**.
+Distributed under the **ISC License**.
