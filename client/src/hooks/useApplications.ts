@@ -84,10 +84,24 @@ export const useApplications = () => {
     }
   }, []);
 
-  const stats = getStatsApi(state.applications);
+  const defaultStats = {
+    counts: {
+      [Status.Applied]: 0,
+      [Status.Screening]: 0,
+      [Status.Interview]: 0,
+      [Status.Offer]: 0,
+      [Status.Closed]: 0,
+    },
+    total: 0,
+    responseRate: 0,
+    overdueFollowUps: 0,
+  };
+
+  const stats = state.stats || getStatsApi(state.applications) || defaultStats;
 
   return {
     applications: state.applications,
+    pagination: state.pagination,
     loading: state.loading,
     error: state.error,
     stats,

@@ -10,15 +10,26 @@ export const initialApplicationState: ApplicationState = {
 export const applicationsReducer = (
   state: ApplicationState,
   action: ApplicationAction
-): ApplicationState => {
+) => {
   switch (action.type) {
-    case ACTION_TYPES.SET_ALL:
+    case ACTION_TYPES.SET_ALL: {
+      if (Array.isArray(action.payload)) {
+        return {
+          ...state,
+          applications: action.payload,
+          loading: false,
+          error: null,
+        };
+      }
       return {
         ...state,
-        applications: action.payload,
+        applications: action.payload.applications || [],
+        pagination: action.payload.pagination || state.pagination,
+        stats: action.payload.stats || state.stats,
         loading: false,
         error: null,
       };
+    }
 
     case ACTION_TYPES.ADD:
       return {

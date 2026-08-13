@@ -3,6 +3,7 @@ import { CustomError } from "../../../error-formates/error-formates.js";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface RegisterInput {
+  name?: string;
   userName?: string;
   email?: string;
   password?: string;
@@ -10,6 +11,7 @@ export interface RegisterInput {
 
 export interface LoginInput {
   email?: string;
+  name?: string;
   userName?: string;
   password?: string;
 }
@@ -19,20 +21,16 @@ export interface RefreshTokenInput {
 }
 
 export function validateRegisterInput(input: RegisterInput) {
-  const userName = input.userName?.trim();
+  const name = (input.name || input.userName)?.trim();
   const email = input.email?.trim().toLowerCase();
   const password = input.password;
 
-  if (!userName || !email || !password) {
-    throw new CustomError("All fields (userName, email, password) are required", 400);
+  if (!name || !email || !password) {
+    throw new CustomError("All fields (name, email, password) are required", 400);
   }
 
-  if (userName.length < 3 || userName.length > 30) {
-    throw new CustomError("Username must be between 3 and 30 characters long", 400);
-  }
-
-  if (!/^[a-zA-Z0-9_-]+$/.test(userName)) {
-    throw new CustomError("Username can only contain letters, numbers, underscores, and hyphens", 400);
+  if (name.length < 2 || name.length > 50) {
+    throw new CustomError("Name must be between 2 and 50 characters long", 400);
   }
 
   if (!EMAIL_REGEX.test(email)) {
@@ -43,15 +41,15 @@ export function validateRegisterInput(input: RegisterInput) {
     throw new CustomError("Password must be at least 6 characters long", 400);
   }
 
-  return { userName, email, password };
+  return { name, email, password };
 }
 
 export function validateLoginInput(input: LoginInput) {
-  const rawIdentifier = input.email || input.userName;
+  const rawIdentifier = input.email || input.name || input.userName;
   const password = input.password;
 
   if (!rawIdentifier || !password) {
-    throw new CustomError("Identifier (email or username) and password are required", 400);
+    throw new CustomError("Email and password are required", 400);
   }
 
   const identifier = rawIdentifier.trim().toLowerCase();

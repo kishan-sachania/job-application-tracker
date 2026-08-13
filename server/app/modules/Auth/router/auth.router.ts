@@ -5,8 +5,8 @@ import ApiResponse from '../../../../utils/api-response.js';
 
 const router = Router();
 
-router.post('/register-user', registerUser);
-router.post('/login-user', loginUser);
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 router.post('/refresh-token', refreshToken);
 router.post('/logout', logout);
 

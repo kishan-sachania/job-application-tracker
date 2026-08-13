@@ -12,13 +12,15 @@ export interface FetchApplicationsParams {
   search?: string;
   sort?: string;
   order?: "asc" | "desc";
+  page: number;
+  
 }
 
 export const getApplicationsApi = async (
   params?: FetchApplicationsParams
-): Promise<JobApplication[]> => {
-  const response = await api.get<ApiResponse<JobApplication[]>>(
-    "/applications/get-applications",
+) => {
+  const response = await api.get<ApiResponse<any>>(
+    "/applications",
     { params }
   );
   return response.data.data || [];
@@ -26,9 +28,9 @@ export const getApplicationsApi = async (
 
 export const createApplicationApi = async (
   data: JobApplicationInput
-): Promise<JobApplication> => {
+) => {
   const response = await api.post<ApiResponse<JobApplication>>(
-    "/applications/apply",
+    "/applications",
     data
   );
   return response.data.data!;
@@ -37,19 +39,19 @@ export const createApplicationApi = async (
 export const updateApplicationApi = async (
   id: string,
   data: Partial<JobApplicationInput>
-): Promise<JobApplication> => {
-  const response = await api.patch<ApiResponse<JobApplication>>(
-    `/applications/update/${id}`,
+) => {
+  const response = await api.put<ApiResponse<JobApplication>>(
+    `/applications/${id}`,
     data
   );
   return response.data.data!;
 };
 
 export const deleteApplicationApi = async (id: string) => {
-  await api.delete<ApiResponse<null>>(`/applications/delete/${id}`);
+  await api.delete<ApiResponse<null>>(`/applications/${id}`);
 };
 
-export const getStatsApi = (applications: JobApplication[]): StatsResponse => {
+export const getStatsApi = (applications: JobApplication[] = []) => {
   const counts: Record<Status, number> = {
     [Status.Applied]: 0,
     [Status.Screening]: 0,
@@ -60,8 +62,11 @@ export const getStatsApi = (applications: JobApplication[]): StatsResponse => {
 
   let overdueFollowUps = 0;
   const todayStr = new Date().toISOString().split("T")[0];
+  const appsList = Array.isArray(applications)
+    ? applications
+    : ((applications as any)?.applications || []);
 
-  applications.forEach((app) => {
+  appsList.forEach((app) => {
     if (counts[app.status] !== undefined) {
       counts[app.status]++;
     }
@@ -75,7 +80,7 @@ export const getStatsApi = (applications: JobApplication[]): StatsResponse => {
     }
   });
 
-  const total = applications.length;
+  const total = appsList.length;
   const responses =
     counts[Status.Screening] + counts[Status.Interview] + counts[Status.Offer];
   const responseRate = total > 0 ? Math.round((responses / total) * 100) : 0;

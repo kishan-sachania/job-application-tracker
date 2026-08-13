@@ -23,7 +23,7 @@ interface ApplicationFormData {
   notes: string;
 }
 
-const getInitialValues = (data?: JobApplication | null): ApplicationFormData => {
+const getInitialValues = (data?: JobApplication | null) => {
   const todayStr = new Date().toISOString().split("T")[0];
   if (data) {
     return {
@@ -56,12 +56,12 @@ const getInitialValues = (data?: JobApplication | null): ApplicationFormData => 
   };
 };
 
-export const ApplicationForm: React.FC<ApplicationFormProps> = ({
+export const ApplicationForm = ({
   isOpen,
   onClose,
   onSubmit,
   initialData,
-}) => {
+}: ApplicationFormProps) => {
   const todayStr = new Date().toISOString().split("T")[0];
 
   const {
@@ -106,7 +106,6 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-slate-950/80 backdrop-blur-sm animate-fade-in">
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-900/50">
           <h3 className="text-xl font-bold text-slate-900 dark:text-white">
             {initialData ? "Edit Job Application" : "New Job Application"}
@@ -119,7 +118,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
           </button>
         </div>
 
-        {/* Modal Content */}
+        {/* form  */}
         <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 space-y-4 overflow-y-auto">
           {errors.root && (
             <div className="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 p-3 rounded-md text-sm">
@@ -249,7 +248,7 @@ export const ApplicationForm: React.FC<ApplicationFormProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
-              Salary Expectation ($/yr)
+              Salary Expectation (₹/yr)
             </label>
             <input
               type="number"

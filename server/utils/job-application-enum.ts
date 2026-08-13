@@ -9,9 +9,9 @@ export const Status = {
 export type Status = (typeof Status)[keyof typeof Status];
 
 export const Location = {
-    Remote: "Remote",
-    Office: "Office",
-    Hybrid: "Hybrid",
+    Remote: "remote",
+    Onsite: "onsite",
+    Hybrid: "hybrid",
 } as const;
 
-export type Location = (typeof Location)[keyof typeof Location];
+export type Location = (typeof Location)[keyof typeof Location] | "Remote" | "Onsite" | "Hybrid" | "Office";

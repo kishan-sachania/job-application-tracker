@@ -14,7 +14,7 @@ interface SearchFilterProps {
   onAddNew: () => void;
 }
 
-export const SearchFilter: React.FC<SearchFilterProps> = ({
+export const SearchFilter = ({
   searchTerm,
   onSearchChange,
   statusFilter,
@@ -24,13 +24,13 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
   onSortFieldChange,
   onSortOrderChange,
   onAddNew,
-}) => {
+}:SearchFilterProps) => {
   const hasActiveFilters = searchTerm !== "" || statusFilter !== "";
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6 shadow-xs backdrop-blur-md">
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        {/* Search Bar */}
+
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
             <Search className="w-4 h-4" />
@@ -52,7 +52,6 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
           )}
         </div>
 
-        {/* Status Dropdown */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="w-full sm:w-auto">
             <select

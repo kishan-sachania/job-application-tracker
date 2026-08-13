@@ -1,8 +1,9 @@
 import React from "react";
 import { Briefcase, AlertTriangle, Pencil, Trash2 } from "lucide-react";
-import type { JobApplication } from "../types";
+import type { JobApplication, PaginationType } from "../types";
 import { Status } from "../types";
 import { STATUS_COLORS } from "../constants/statusColors";
+import { Pagination } from "./Pagination";
 
 interface ApplicationListProps {
   applications: JobApplication[];
@@ -10,12 +11,14 @@ interface ApplicationListProps {
   onUpdateStatus: (id: string, newStatus: Status) => void;
   onEdit: (app: JobApplication) => void;
   onDelete: (id: string) => void;
+  pagination?: PaginationType;
+  onPageChange?: (page: number) => void;
 }
 
-const StatusBadgeCell: React.FC<{
+const StatusBadgeCell = ({ app, onUpdateStatus }: {
   app: JobApplication;
   onUpdateStatus: (id: string, newStatus: Status) => void;
-}> = ({ app, onUpdateStatus }) => {
+}) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const statusStyle = STATUS_COLORS[app.status] || STATUS_COLORS[Status.Applied];
 
@@ -52,13 +55,15 @@ const StatusBadgeCell: React.FC<{
   );
 };
 
-export const ApplicationList: React.FC<ApplicationListProps> = ({
+export const ApplicationList = ({
   applications,
   loading,
   onUpdateStatus,
   onEdit,
   onDelete,
-}) => {
+  pagination,
+  onPageChange,
+}: ApplicationListProps) => {
   const todayStr = new Date().toISOString().split("T")[0];
 
   const isFollowUpDue = (app: JobApplication) => {
@@ -102,6 +107,14 @@ export const ApplicationList: React.FC<ApplicationListProps> = ({
 
   return (
     <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-xs dark:shadow-xl my-6 backdrop-blur-md">
+      {pagination && onPageChange && (
+        <Pagination
+          total={pagination.total}
+          page={pagination.page}
+          limit={pagination.limit}
+          onPageChange={onPageChange}
+        />
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-700 dark:text-slate-300 border-collapse">
           <thead>
@@ -123,9 +136,8 @@ export const ApplicationList: React.FC<ApplicationListProps> = ({
               return (
                 <tr
                   key={app.id}
-                  className={`group transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${
-                    dueAlert ? "bg-amber-50/60 dark:bg-amber-950/20" : ""
-                  }`}
+                  className={`group transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50 ${dueAlert ? "bg-amber-50/60 dark:bg-amber-950/20" : ""
+                    }`}
                 >
                   {/* Company & Role */}
                   <td className="py-3.5 px-4 min-w-[180px]">
@@ -158,11 +170,10 @@ export const ApplicationList: React.FC<ApplicationListProps> = ({
                   <td className="py-3.5 px-4 whitespace-nowrap text-xs">
                     {app.nextFollowUpDate ? (
                       <span
-                        className={`font-semibold ${
-                          dueAlert
+                        className={`font-semibold ${dueAlert
                             ? "text-amber-700 dark:text-amber-400 inline-flex items-center gap-1 font-bold animate-pulse"
                             : "text-slate-600 dark:text-slate-300"
-                        }`}
+                          }`}
                       >
                         {dueAlert && <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />}
                         {formatDate(app.nextFollowUpDate)}
@@ -175,7 +186,7 @@ export const ApplicationList: React.FC<ApplicationListProps> = ({
                   {/* Salary Expectation */}
                   <td className="py-3.5 px-4 whitespace-nowrap text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                     {app.salaryExpectation !== undefined
-                      ? `$${Number(app.salaryExpectation).toLocaleString()}`
+                      ? `₹${Number(app.salaryExpectation).toLocaleString()}`
                       : "-"}
                   </td>
 

@@ -1,4 +1,3 @@
-import React from "react";
 import type { StatsResponse } from "../types";
 import { Status } from "../types";
 import { STATUS_COLORS } from "../constants/statusColors";
@@ -9,11 +8,11 @@ interface StatsPanelProps {
   onSelectStatusFilter?: (status: string) => void;
 }
 
-export const StatsPanel: React.FC<StatsPanelProps> = ({
+export const StatsPanel = ({
   stats,
   activeStatusFilter = "",
   onSelectStatusFilter,
-}) => {
+}: StatsPanelProps) => {
   const cards = [
     {
       title: "Total Applications",
@@ -79,13 +78,11 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
                 onSelectStatusFilter(isSelected ? "" : card.key);
               }
             }}
-            className={`p-4 rounded-xl border bg-gradient-to-br ${
-              card.accent
-            } bg-white dark:bg-slate-900/80 backdrop-blur-sm shadow-xs transition-all duration-200 ${
-              isClickable
+            className={`p-4 rounded-xl border bg-gradient-to-br ${card.accent
+              } bg-white dark:bg-slate-900/80 backdrop-blur-sm shadow-xs transition-all duration-200 ${isClickable
                 ? "cursor-pointer hover:scale-[1.02] hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600"
                 : ""
-            } ${isSelected ? "ring-2 ring-blue-500 border-blue-500 shadow-blue-500/10" : ""}`}
+              } ${isSelected ? "ring-2 ring-blue-500 border-blue-500 shadow-blue-500/10" : ""}`}
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider uppercase">

@@ -7,45 +7,41 @@ export interface GetApplicationsOptions {
     search?: string;
     sort?: string;
     order?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
 }
+
+const buildMatch = (userId: string, status?: string, search?: string) => {
+    const match: Record<string, any> = { userId: new Types.ObjectId(userId) };
+    if (status?.trim()) match.status = status;
+    if (search?.trim()) {
+        match.$or = [
+            { company: { $regex: search.trim(), $options: 'i' } },
+            { role: { $regex: search.trim(), $options: 'i' } },
+        ];
+    }
+    return match;
+};
 
 
 // GET
-export const getAllJobApplications = async (
-    userId: string,
-    options: GetApplicationsOptions = {}
-) => {
-    const { status, search, sort = 'appliedDate', order = 'desc' } = options;
+export const getAllJobApplications = async (userId: string, options: GetApplicationsOptions = {}) => {
+    const { status, search, sort = 'appliedDate', order = 'desc', page = 1, limit = 10 } = options;
+    const match = buildMatch(userId, status, search);
 
-    const matchStage: Record<string, any> = {
-        userId: new Types.ObjectId(userId)
-    }
+    const [applications, total] = await Promise.all([
+        JobApplication.find(match)
+            .sort({ [sort]: order === 'asc' ? 1 : -1 })
+            .skip((page - 1) * limit)
+            .limit(limit),
+        JobApplication.countDocuments(match),
+    ]);
 
-    if (status && status.trim() !== "") {
-        matchStage.status = status;
-    }
-
-    if (search && search.trim() !== "") {
-        matchStage.$or = [
-            { company: { $regex: search.trim(), $options: 'i' } },
-            { role: { $regex: search.trim(), $options: 'i' } }
-        ]
-    }
-
-    const sortOrder = order === 'asc' ? 1 : -1;
-    const sortStage: Record<string, 1 | -1> = { [sort || 'appliedDate']: sortOrder };
-
-    const pipeline = [
-        { $match: matchStage },
-        { $sort: sortStage },
-    ];
-
-    const result = await JobApplication.aggregate(pipeline);
-    return result.map(({ _id, __v, ...rest }: any) => ({
-        id: _id ? _id.toString() : rest.id,
-        ...rest,
-    }));
-};
+    return {
+        applications,
+        pagination: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
+}
 
 
 export const registerApplication = async (userId: string, data: IJobApplication) => {

@@ -2,14 +2,14 @@ import { model, Schema } from 'mongoose'
 
 export interface IUser {
   _id: string;
-  userName: string;
+  name: string;
   email: string;
   password: string;
   role: string;
 }
 
 const userSchema = new Schema<IUser>({
-  userName: {
+  name: {
     type: String,
     required: true,
     trim: true,
@@ -19,6 +19,7 @@ const userSchema = new Schema<IUser>({
     required: true,
     trim: true,
     unique: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
   },
   password: {
     type: String,

@@ -13,7 +13,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const getCookie = (name: string): string | null => {
+const getCookie = (name: string) => {
   if (typeof document === "undefined") return null;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -32,8 +32,10 @@ const removeCookie = (name: string) => {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider = ({
   children,
+}: {
+  children: React.ReactNode;
 }) => {
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("job_tracker_user");
@@ -96,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");

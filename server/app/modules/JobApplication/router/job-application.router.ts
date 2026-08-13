@@ -8,9 +8,9 @@ import {
 
 const router = Router();
 
-router.get('/get-applications', getAllJobApplication)
-router.post('/apply', applyToJobApplication)
-router.put('/update/:id', updateJobApplicationStatus)
-router.delete('/delete/:id', deleteJobApplication)
+router.get('/', getAllJobApplication);
+router.post('/', applyToJobApplication);
+router.put('/:id', updateJobApplicationStatus);
+router.delete('/:id', deleteJobApplication);
 
 export default router;

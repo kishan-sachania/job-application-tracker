@@ -4,16 +4,16 @@ import type { AuthResponse, User, ApiResponse } from "../types";
 export const loginApi = async (credentials: {
   email: string;
   password?: string;
-}): Promise<AuthResponse> => {
+}) => {
   const response = await api.post<ApiResponse<AuthResponse>>(
-    "/auth/login-user",
+    "/auth/login",
     credentials
   );
 
   if (response.data && response.data.data) {
     const data = response.data.data;
     const token = data.token || data.accessToken || "";
-    const userId = data.user.id || data.user.id || "";
+    const userId = data.user.id || "";
     const user: User = {
       id: userId,
       email: data.user.email,
@@ -29,19 +29,13 @@ export const registerApi = async (data: {
   email: string;
   password?: string;
   name?: string;
-}): Promise<AuthResponse> => {
-  const rawName = (data.name || data.email.split("@")[0]).trim();
-  let userName = rawName.replace(/[^a-zA-Z0-9_-]/g, "_");
-  if (userName.length < 3) {
-    userName = `${userName}_user`.slice(0, 30);
-  } else {
-    userName = userName.slice(0, 30);
-  }
+}) => {
+  const name = (data.name || data.email.split("@")[0]).trim();
 
   const response = await api.post<ApiResponse<AuthResponse>>(
-    "/auth/register-user",
+    "/auth/register",
     {
-      userName,
+      name,
       email: data.email,
       password: data.password,
     }
@@ -62,7 +56,7 @@ export const registerApi = async (data: {
   throw new Error(response.data?.message || "Registration failed");
 };
 
-export const getMeApi = async (): Promise<User> => {
+export const getMeApi = async () => {
   const response = await api.get<ApiResponse<{ user: User }>>("/auth/me");
   if (response.data && response.data.data?.user) {
     const u = response.data.data.user;
@@ -80,7 +74,7 @@ export const getMeApi = async (): Promise<User> => {
   throw new Error("No authenticated user found");
 };
 
-export const logoutApi = async (): Promise<void> => {
+export const logoutApi = async () => {
   try {
     await api.post("/auth/logout");
   } catch {

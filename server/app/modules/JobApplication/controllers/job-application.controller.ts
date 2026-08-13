@@ -7,7 +7,7 @@ import { CustomError } from "../../../error-formates/error-formates.js";
 const normalizeUserId = (req: Request) => {
     const header = req.headers['x-user-id']
     const userId = Array.isArray(header) ? header[0] : header;
-    return userId ? String(userId) : null;
+    return userId;
 }
 
 const getParamsId = (req: Request) => {
@@ -26,16 +26,18 @@ const getAllJobApplication = async (req: Request, res: Response) => {
         if (!userId) {
             return ApiResponse.error(res, "Missing user ID", 400);
         }
-        const { status, search, sort, order } = req.query;
+        const { status, search, sort, order, page, limit } = req.query;
 
-        const applications = await getAllJobApplications((userId), {
+        const result = await getAllJobApplications(userId, {
             status: String(status ?? ""),
             search: String(search ?? ""),
             sort: String(sort ?? ""),
-            order: String(order ?? "") as "asc" | "desc"
-        })
+            order: String(order ?? "") as "asc" | "desc",
+            page: page ? Number(page) : 1,
+            limit: limit ? Number(limit) : 10,
+        });
 
-        ApiResponse.success(res, "Applications fetched successfully", 200, applications);
+        ApiResponse.success(res, "Applications fetched successfully", 200, result);
     } catch (error) {
         if (error instanceof CustomError) {
             return ApiResponse.error(res, error.message, error.statusCode);

@@ -6,7 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import { loginApi } from "../api/auth";
 import { getErrorMessage } from "../utils/error";
 
-export const Login: React.FC = () => {
+export const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { theme, toggleTheme } = useTheme();

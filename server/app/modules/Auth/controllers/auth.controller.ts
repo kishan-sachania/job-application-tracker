@@ -4,9 +4,8 @@ import {
   createUser,
   getUserByEmail,
   getUserById,
-  getUserByEmailOrUsername,
+  getUserByEmailOrName,
   hashPassword,
-  sanitizeUser,
 } from "../services/user.service.js";
 import { IUser } from "../../../models/user.model.js";
 import { CustomError } from "../../../error-formates/error-formates.js";
@@ -17,7 +16,7 @@ import {
   validateRefreshTokenInput,
 } from "../validators/auth.validator.js";
 
-const getCookieValue = (req: Request, name: string): string | undefined => {
+const getCookieValue = (req: Request, name: string) => {
   const cookieHeader = req.headers.cookie;
   if (!cookieHeader) return undefined;
   const match = cookieHeader.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -45,7 +44,7 @@ const registerUser = async (req: Request, res: Response) => {
     });
 
     return ApiResponse.success(res, "User registered successfully", 201, {
-      user: sanitizeUser(user),
+      user,
       accessToken,
       refreshToken,
     });
@@ -61,7 +60,7 @@ const loginUser = async (req: Request, res: Response) => {
   try {
     const { identifier, password } = validateLoginInput(req.body);
 
-    const user = await getUserByEmailOrUsername(identifier);
+    const user = await getUserByEmailOrName(identifier);
     if (!user) {
       throw new CustomError("Invalid credentials", 401);
     }
@@ -87,7 +86,7 @@ const loginUser = async (req: Request, res: Response) => {
     });
 
     return ApiResponse.success(res, "User logged in successfully", 200, {
-      user: sanitizeUser(user),
+      user,
       accessToken,
       refreshToken,
     });

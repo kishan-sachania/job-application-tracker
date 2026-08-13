@@ -9,9 +9,9 @@ export const Status = {
 export type Status = (typeof Status)[keyof typeof Status];
 
 export const Location = {
-  Remote: "Remote",
-  Office: "Office",
-  Hybrid: "Hybrid",
+  Remote: "remote",
+  Onsite: "onsite",
+  Hybrid: "hybrid",
 } as const;
 
 export type Location = (typeof Location)[keyof typeof Location];
@@ -36,6 +36,18 @@ export interface JobApplication {
   userId: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface PaginationType {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface ApplicationsData {
+  applications: JobApplication[];
+  pagination: PaginationType;
 }
 
 export interface JobApplicationInput {
@@ -71,12 +83,14 @@ export interface ApiResponse<T = unknown> {
 
 export interface ApplicationState {
   applications: JobApplication[];
+  pagination?: PaginationType;
+  stats?: StatsResponse;
   loading: boolean;
   error: string | null;
 }
 
 export type ApplicationAction =
-  | { type: "SET_ALL"; payload: JobApplication[] }
+  | { type: "SET_ALL"; payload: JobApplication[] | { applications: JobApplication[]; pagination?: PaginationType; stats?: StatsResponse } }
   | { type: "ADD"; payload: JobApplication }
   | { type: "UPDATE"; payload: JobApplication }
   | { type: "DELETE"; payload: string }

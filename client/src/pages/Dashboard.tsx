@@ -10,11 +10,12 @@ import { SearchFilter } from "../components/SearchFilter";
 import { ApplicationList } from "../components/ApplicationList";
 import { ApplicationForm } from "../components/ApplicationForm";
 
-export const Dashboard: React.FC = () => {
+export const Dashboard = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const {
     applications,
+    pagination,
     loading,
     error,
     stats,
@@ -31,6 +32,7 @@ export const Dashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [sortField, setSortField] = useState("appliedDate");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [page, setPage] = useState(1);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingApplication, setEditingApplication] = useState<JobApplication | null>(null);
@@ -41,8 +43,9 @@ export const Dashboard: React.FC = () => {
       status: statusFilter,
       sort: sortField,
       order: sortOrder,
+      page,
     });
-  }, [debouncedSearch, statusFilter, sortField, sortOrder, fetchApplications]);
+  }, [debouncedSearch, statusFilter, sortField, sortOrder, page, fetchApplications]);
 
   const handleOpenAddModal = () => {
     setEditingApplication(null);
@@ -154,6 +157,8 @@ export const Dashboard: React.FC = () => {
           onUpdateStatus={updateStatus}
           onEdit={handleOpenEditModal}
           onDelete={deleteApplication}
+          pagination={pagination}
+          onPageChange={setPage}
         />
       </main>
 
