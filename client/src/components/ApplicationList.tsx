@@ -1,9 +1,11 @@
-import React from "react";
+
 import { Briefcase, AlertTriangle, Pencil, Trash2 } from "lucide-react";
 import type { JobApplication, PaginationType } from "../types";
 import { Status } from "../types";
 import { STATUS_COLORS } from "../constants/statusColors";
 import { Pagination } from "./Pagination";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { useState } from "react";
 
 interface ApplicationListProps {
   applications: JobApplication[];
@@ -19,7 +21,7 @@ const StatusBadgeCell = ({ app, onUpdateStatus }: {
   app: JobApplication;
   onUpdateStatus: (id: string, newStatus: Status) => void;
 }) => {
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const statusStyle = STATUS_COLORS[app.status] || STATUS_COLORS[Status.Applied];
 
   if (isEditing) {
@@ -64,6 +66,7 @@ export const ApplicationList = ({
   pagination,
   onPageChange,
 }: ApplicationListProps) => {
+  const [deletingApp, setDeletingApp] = useState<JobApplication | null>(null);
   const todayStr = new Date().toISOString().split("T")[0];
 
   const isFollowUpDue = (app: JobApplication) => {
@@ -212,11 +215,7 @@ export const ApplicationList = ({
                         <Pencil className="w-3 h-3" /> Edit
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(`Delete application for ${app.company}?`)) {
-                            onDelete(app.id);
-                          }
-                        }}
+                        onClick={() => setDeletingApp(app)}
                         className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 transition cursor-pointer"
                         title="Delete Application"
                       >
@@ -230,6 +229,17 @@ export const ApplicationList = ({
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!deletingApp}
+        message={`Are you sure you want to delete the application for ${deletingApp?.company}?`}
+        onConfirm={() => {
+          if (deletingApp) {
+            onDelete(deletingApp.id);
+          }
+        }}
+        onClose={() => setDeletingApp(null)}
+      />
     </div>
   );
 };
