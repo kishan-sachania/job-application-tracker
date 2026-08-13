@@ -83,10 +83,10 @@ const applyToJobApplication = async (req: Request, res: Response) => {
 const updateJobApplicationStatus = async (req: Request, res: Response) => {
     try {
         const userId = normalizeUserId(req);
-        const id = getParamsId(req)
         if (!userId) {
             return ApiResponse.error(res, "Missing user ID", 400);
         }
+        const id = getParamsId(req);
         const body = req.body;
         const updated = await updateApplication(id, userId, body);
         ApiResponse.success(res, "Application updated successfully", 200, updated);
@@ -101,10 +101,10 @@ const updateJobApplicationStatus = async (req: Request, res: Response) => {
 const deleteJobApplication = async (req: Request, res: Response) => {
     try {
         const userId = normalizeUserId(req);
-        const id = getParamsId(req);
         if (!userId) {
             return ApiResponse.error(res, "Missing user ID", 400);
         }
+        const id = getParamsId(req);
         await deleteApplication(id, userId);
         ApiResponse.success(res, "Application deleted successfully", 200);
     } catch (error) {

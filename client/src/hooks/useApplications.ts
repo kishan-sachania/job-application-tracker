@@ -105,20 +105,7 @@ export const useApplications = () => {
     }
   }, [fetchStats]);
 
-  const defaultStats = {
-    counts: {
-      [Status.Applied]: 0,
-      [Status.Screening]: 0,
-      [Status.Interview]: 0,
-      [Status.Offer]: 0,
-      [Status.Closed]: 0,
-    },
-    total: 0,
-    responseRate: 0,
-    overdueFollowUps: 0,
-  };
-
-  const stats = state.stats || getStatsApi(state.applications) || defaultStats;
+  const stats = state.stats || getStatsApi(state.applications);
 
   return {
     applications: state.applications,

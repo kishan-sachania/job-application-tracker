@@ -16,32 +16,12 @@ import {
   validateRefreshTokenInput,
 } from "../validators/auth.validator.js";
 
-const getCookieValue = (req: Request, name: string) => {
-  const cookieHeader = req.headers.cookie;
-  if (!cookieHeader) return undefined;
-  const match = cookieHeader.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : undefined;
-};
-
 const registerUser = async (req: Request, res: Response) => {
   try {
     const validatedData = validateRegisterInput(req.body);
 
     const user = await createUser(validatedData as IUser);
     const { accessToken, refreshToken } = generateTokens(user);
-
-    res.cookie("job_tracker_token", accessToken, {
-      httpOnly: false,
-      path: "/",
-      sameSite: "lax",
-    });
-
-    res.cookie("job_tracker_refresh_token", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
 
     return ApiResponse.success(res, "User registered successfully", 201, {
       user,
@@ -72,19 +52,6 @@ const loginUser = async (req: Request, res: Response) => {
 
     const { accessToken, refreshToken } = generateTokens(user);
 
-    res.cookie("job_tracker_token", accessToken, {
-      httpOnly: false,
-      path: "/",
-      sameSite: "lax",
-    });
-
-    res.cookie("job_tracker_refresh_token", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
     return ApiResponse.success(res, "User logged in successfully", 200, {
       user,
       accessToken,
@@ -100,9 +67,7 @@ const loginUser = async (req: Request, res: Response) => {
 
 const refreshToken = async (req: Request, res: Response) => {
   try {
-    const tokenFromCookie = getCookieValue(req, "job_tracker_refresh_token");
-    const bodyToken = req.body?.refreshToken;
-    const tokenToVerify = tokenFromCookie || bodyToken;
+    const tokenToVerify = req.body?.refreshToken;
 
     const { refreshToken: token } = validateRefreshTokenInput({ refreshToken: tokenToVerify });
 
@@ -126,12 +91,6 @@ const refreshToken = async (req: Request, res: Response) => {
 
     const accessToken = createAccessToken(user);
 
-    res.cookie("job_tracker_token", accessToken, {
-      httpOnly: false,
-      path: "/",
-      sameSite: "lax",
-    });
-
     return ApiResponse.success(res, "Access token refreshed successfully", 200, {
       accessToken,
     });
@@ -145,8 +104,6 @@ const refreshToken = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    res.clearCookie("job_tracker_token", { path: "/" });
-    res.clearCookie("job_tracker_refresh_token", { path: "/" });
     return ApiResponse.success(res, "User logged out successfully", 200);
   } catch (error) {
     if (error instanceof CustomError) {

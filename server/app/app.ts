@@ -11,7 +11,8 @@ const allowedOrigins = [
   "https://job-application-tracker-sigma-three-39.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
-].filter(Boolean);
+].filter((o): o is string => Boolean(o));
+
 
 app.use(
   cors({
@@ -19,7 +20,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin) || allowedOrigins.some((o) => origin.startsWith(o))) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(new Error("CORS origin not allowed"), false);
       }
     },
     credentials: true,

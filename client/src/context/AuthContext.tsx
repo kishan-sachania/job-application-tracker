@@ -13,25 +13,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const getCookie = (name: string) => {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-  return null;
-};
-
-const setCookie = (name: string, value: string, days = 7) => {
-  if (typeof document === "undefined") return;
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
-};
-
-const removeCookie = (name: string) => {
-  if (typeof document === "undefined") return;
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
-};
-
 export const AuthProvider = ({
   children,
 }: {
@@ -50,16 +31,7 @@ export const AuthProvider = ({
   });
 
   const [token, setToken] = useState<string | null>(() => {
-    const cookieToken = getCookie("job_tracker_token");
-    if (cookieToken) {
-      return cookieToken;
-    }
-    const storedToken = localStorage.getItem("job_tracker_token");
-    if (storedToken) {
-      setCookie("job_tracker_token", storedToken);
-      return storedToken;
-    }
-    return null;
+    return localStorage.getItem("job_tracker_token");
   });
 
   const [loading] = useState<boolean>(false);
@@ -67,7 +39,6 @@ export const AuthProvider = ({
   const login = (userData: User, authToken: string) => {
     setUser(userData);
     setToken(authToken);
-    setCookie("job_tracker_token", authToken);
     localStorage.setItem("job_tracker_token", authToken);
     localStorage.setItem("job_tracker_user", JSON.stringify(userData));
   };
@@ -76,8 +47,8 @@ export const AuthProvider = ({
     logoutApi().catch(() => {});
     setUser(null);
     setToken(null);
-    removeCookie("job_tracker_token");
     localStorage.removeItem("job_tracker_token");
+    localStorage.removeItem("job_tracker_refresh_token");
     localStorage.removeItem("job_tracker_user");
   };
 

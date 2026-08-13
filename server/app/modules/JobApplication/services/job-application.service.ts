@@ -90,25 +90,20 @@ export const registerApplication = async (userId: string, data: IJobApplication)
 }
 
 export const updateApplication = async (id: string, userId: string, data: Partial<IJobApplication>) => {
-    const job = await JobApplication.findOne({ _id: id });
-    if (!job) {
+    const updated = await JobApplication.findOneAndUpdate(
+        { _id: id, userId },
+        { $set: data },
+        { new: true }
+    );
+    if (!updated) {
         throw new CustomError('Application not found', 404);
     }
-    if (job.userId.toString() !== userId) {
-        throw new CustomError('Unauthorized to update this application', 403);
-    }
-    await JobApplication.updateOne({ _id: id }, { $set: data });
-    return await JobApplication.findById(id);
-}
-
+    return updated;
+};
 
 export const deleteApplication = async (id: string, userId: string) => {
-    const job = await JobApplication.findOne({ _id: id });
-    if (!job) {
+    const deleted = await JobApplication.findOneAndDelete({ _id: id, userId });
+    if (!deleted) {
         throw new CustomError('Application not found', 404);
     }
-    if (job.userId.toString() !== userId) {
-        throw new CustomError('Unauthorized to delete this application', 403);
-    }
-    await JobApplication.deleteOne({ _id: id });
-}
+};

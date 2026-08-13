@@ -60,7 +60,6 @@ export const refreshTokenApi = async () => {
   const newAccessToken = response.data?.data?.accessToken;
   if (newAccessToken) {
     localStorage.setItem("job_tracker_token", newAccessToken);
-    document.cookie = `job_tracker_token=${encodeURIComponent(newAccessToken)}; path=/; SameSite=Lax`;
     return newAccessToken;
   }
   throw new Error("Failed to refresh token");
@@ -88,6 +87,5 @@ export const logoutApi = async () => {
     localStorage.removeItem("job_tracker_token");
     localStorage.removeItem("job_tracker_refresh_token");
     localStorage.removeItem("job_tracker_user");
-    document.cookie = "job_tracker_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
   }
 };

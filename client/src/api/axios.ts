@@ -17,17 +17,9 @@ export const api = axios.create({
   },
 });
 
-const getCookie = (name: string) => {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-  return null;
-};
-
 api.interceptors.request.use(
   (config) => {
-    const token = getCookie("job_tracker_token");
+    const token = localStorage.getItem("job_tracker_token");
     const userStr = localStorage.getItem("job_tracker_user");
 
     if (token) {
@@ -106,8 +98,7 @@ api.interceptors.response.use(
 
         const refreshRes = await axios.post(
           `${API_BASE_URL}/auth/refresh-token`,
-          { refreshToken: storedRefreshToken },
-          { withCredentials: true }
+          { refreshToken: storedRefreshToken }
         );
 
         const newAccessToken = refreshRes.data?.data?.accessToken;
@@ -116,7 +107,6 @@ api.interceptors.response.use(
         }
 
         localStorage.setItem("job_tracker_token", newAccessToken);
-        document.cookie = `job_tracker_token=${encodeURIComponent(newAccessToken)}; path=/; SameSite=Lax`;
 
         processQueue(null, newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -126,7 +116,6 @@ api.interceptors.response.use(
         localStorage.removeItem("job_tracker_token");
         localStorage.removeItem("job_tracker_refresh_token");
         localStorage.removeItem("job_tracker_user");
-        document.cookie = "job_tracker_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
 
         if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
           window.location.href = "/login";

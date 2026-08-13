@@ -66,12 +66,10 @@ export const getStatsApi = (applications: JobApplication[] = []) => {
 
   let overdueFollowUps = 0;
   const todayStr = new Date().toISOString().split("T")[0];
-  const appsList = Array.isArray(applications)
-    ? applications
-    : ((applications as any)?.applications || []);
+  const appsList = Array.isArray(applications) ? applications : [];
 
-  appsList.forEach((app) => {
-    if (counts[app.status] !== undefined) {
+  appsList.forEach((app: JobApplication) => {
+    if (app.status && counts[app.status] !== undefined) {
       counts[app.status]++;
     }
     if (app.nextFollowUpDate) {
