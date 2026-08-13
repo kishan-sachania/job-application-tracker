@@ -34,10 +34,12 @@ const userSchema = new Schema<IUser>({
 
 userSchema.set("toJSON", {
   transform: (doc: any, ret: Record<string, any>) => {
-    ret.id = ret._id;
+    ret.id = ret._id ? ret._id.toString() : ret.id;
+    delete ret._id;
     delete ret.password;
     delete ret.__v;
   },
 });
+
 
 export const User = model<IUser>('User', userSchema)
