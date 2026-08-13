@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./modules/Auth/router/auth.router.js";
 import jobRoutes from "./modules/JobApplication/router/job-application.router.js";
+import { authenticateToken } from "./modules/Auth/middleware/auth.middleware.js";
 
 const app = express();
 
@@ -10,7 +11,7 @@ const allowedOrigins = [
   "https://job-application-tracker-sigma-three-39.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
-].filter(Boolean) as string[];
+].filter(Boolean);
 
 app.use(
   cors({
@@ -33,11 +34,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Job Application Tracker API Server Running" });
 });
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Job Application Tracker API v2" });
-});
 
 app.use("/api/auth", userRoutes);
-app.use("/api/applications", jobRoutes);
+app.use("/api/applications", authenticateToken ,jobRoutes);
 
 export default app;

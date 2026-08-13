@@ -69,8 +69,9 @@ export interface StatsResponse {
 }
 
 export interface AuthResponse {
-  token: string;
-  accessToken?: string;
+  accessToken: string;
+  refreshToken?: string;
+  token?: string;
   user: User;
 }
 

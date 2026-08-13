@@ -10,16 +10,13 @@ export const loginApi = async (credentials: {
     credentials
   );
 
-  if (response.data && response.data.data) {
-    const data = response.data.data;
-    const token = data.token || data.accessToken || "";
-    const userId = data.user.id || "";
-    const user: User = {
-      id: userId,
-      email: data.user.email,
-      name: data.user.name || data.user.userName || data.user.email.split("@")[0],
-    };
-    return { token, user };
+  if (response.data?.data) {
+    const { accessToken, refreshToken, token, user } = response.data.data;
+    const activeToken = accessToken || token || "";
+    if (refreshToken) {
+      localStorage.setItem("job_tracker_refresh_token", refreshToken);
+    }
+    return { token: activeToken, user };
   }
 
   throw new Error(response.data?.message || "Login failed");
@@ -41,30 +38,38 @@ export const registerApi = async (data: {
     }
   );
 
-  if (response.data && response.data.data) {
-    const resData = response.data.data;
-    const token = resData.token || resData.accessToken || "";
-    const userId = resData.user.id || resData.user.id || "";
-    const user: User = {
-      id: userId,
-      email: resData.user.email,
-      name: resData.user.name || resData.user.userName || resData.user.email.split("@")[0],
-    };
-    return { token, user };
+  if (response.data?.data) {
+    const { accessToken, refreshToken, token, user } = response.data.data;
+    const activeToken = accessToken || token || "";
+    if (refreshToken) {
+      localStorage.setItem("job_tracker_refresh_token", refreshToken);
+    }
+    return { token: activeToken, user };
   }
 
   throw new Error(response.data?.message || "Registration failed");
 };
 
+export const refreshTokenApi = async () => {
+  const storedRefreshToken = localStorage.getItem("job_tracker_refresh_token");
+  const response = await api.post<ApiResponse<{ accessToken: string }>>(
+    "/auth/refresh-token",
+    { refreshToken: storedRefreshToken }
+  );
+
+  const newAccessToken = response.data?.data?.accessToken;
+  if (newAccessToken) {
+    localStorage.setItem("job_tracker_token", newAccessToken);
+    document.cookie = `job_tracker_token=${encodeURIComponent(newAccessToken)}; path=/; SameSite=Lax`;
+    return newAccessToken;
+  }
+  throw new Error("Failed to refresh token");
+};
+
 export const getMeApi = async () => {
   const response = await api.get<ApiResponse<{ user: User }>>("/auth/me");
-  if (response.data && response.data.data?.user) {
-    const u = response.data.data.user;
-    return {
-      id: u.id || "",
-      email: u.email,
-      name: u.name || u.userName || u.email.split("@")[0],
-    };
+  if (response.data?.data?.user) {
+    return response.data.data.user;
   }
 
   const userStr = localStorage.getItem("job_tracker_user");
@@ -79,5 +84,10 @@ export const logoutApi = async () => {
     await api.post("/auth/logout");
   } catch {
     // Best-effort logout cleanup on backend
+  } finally {
+    localStorage.removeItem("job_tracker_token");
+    localStorage.removeItem("job_tracker_refresh_token");
+    localStorage.removeItem("job_tracker_user");
+    document.cookie = "job_tracker_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
   }
 };

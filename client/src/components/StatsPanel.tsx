@@ -15,14 +15,6 @@ export const StatsPanel = ({
 }: StatsPanelProps) => {
   const cards = [
     {
-      title: "Total Applications",
-      value: stats.total,
-      subtitle: `${stats.overdueFollowUps} follow-ups due`,
-      key: "",
-      badgeColor: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
-      accent: "from-blue-50 to-indigo-50/50 dark:from-blue-500/20 dark:to-indigo-500/20 border-slate-200 dark:border-slate-800",
-    },
-    {
       title: "Applied",
       value: stats.counts[Status.Applied],
       subtitle: "Initial Stage",
@@ -53,6 +45,14 @@ export const StatsPanel = ({
       key: Status.Offer,
       badgeColor: STATUS_COLORS[Status.Offer].badge,
       accent: "from-emerald-50/80 to-emerald-100/30 dark:from-emerald-500/10 dark:to-emerald-600/10 border-emerald-200 dark:border-emerald-500/20",
+    },
+    {
+      title: "Closed",
+      value: stats.counts[Status.Closed],
+      subtitle: "Rejected / Withdrawn",
+      key: Status.Closed,
+      badgeColor: STATUS_COLORS[Status.Closed].badge,
+      accent: "from-rose-50/80 to-rose-100/30 dark:from-rose-500/10 dark:to-rose-600/10 border-rose-200 dark:border-rose-500/20",
     },
     {
       title: "Response Rate",
