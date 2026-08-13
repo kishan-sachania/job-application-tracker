@@ -28,11 +28,11 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
   const hasActiveFilters = searchTerm !== "" || statusFilter !== "";
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 mb-6 shadow-xl backdrop-blur-md">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6 shadow-xs backdrop-blur-md">
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Search Bar */}
         <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
             <Search className="w-4 h-4" />
           </div>
           <input
@@ -40,12 +40,12 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by company or role..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 border border-slate-700/80 rounded-md text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition duration-150"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-md text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 focus:bg-white dark:focus:bg-slate-800 text-sm transition duration-150"
           />
           {searchTerm && (
             <button
               onClick={() => onSearchChange("")}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-white"
             >
               <X className="w-4 h-4" />
             </button>
@@ -58,11 +58,11 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
             <select
               value={statusFilter}
               onChange={(e) => onStatusChange(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700/80 rounded-md px-3.5 py-2.5 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-md px-3.5 py-2.5 text-slate-700 dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 cursor-pointer"
             >
-              <option value="">All Statuses</option>
+              <option value="" className="bg-white dark:bg-slate-900">All Statuses</option>
               {Object.values(Status).map((st) => (
-                <option key={st} value={st}>
+                <option key={st} value={st} className="bg-white dark:bg-slate-900">
                   {st}
                 </option>
               ))}
@@ -74,12 +74,12 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
             <select
               value={sortField}
               onChange={(e) => onSortFieldChange(e.target.value)}
-              className="bg-slate-800 border border-slate-700/80 rounded-md px-3 py-2.5 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-md px-3 py-2.5 text-slate-700 dark:text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 cursor-pointer"
             >
-              <option value="appliedDate">Sort: Applied Date</option>
-              <option value="company">Sort: Company</option>
-              <option value="role">Sort: Role</option>
-              <option value="nextFollowUpDate">Sort: Follow-up Date</option>
+              <option value="appliedDate" className="bg-white dark:bg-slate-900">Sort: Applied Date</option>
+              <option value="company" className="bg-white dark:bg-slate-900">Sort: Company</option>
+              <option value="role" className="bg-white dark:bg-slate-900">Sort: Role</option>
+              <option value="nextFollowUpDate" className="bg-white dark:bg-slate-900">Sort: Follow-up Date</option>
             </select>
 
             <button
@@ -87,15 +87,15 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
                 onSortOrderChange(sortOrder === "asc" ? "desc" : "asc")
               }
               title={`Sort ${sortOrder === "asc" ? "Descending" : "Ascending"}`}
-              className="flex items-center gap-1.5 px-3 py-2.5 bg-slate-800 border border-slate-700/80 rounded-md text-slate-200 hover:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer"
             >
               {sortOrder === "asc" ? (
                 <>
-                  <ArrowUp className="w-4 h-4" /> Asc
+                  <ArrowUp className="w-4 h-4 text-slate-500 dark:text-slate-400" /> Asc
                 </>
               ) : (
                 <>
-                  <ArrowDown className="w-4 h-4" /> Desc
+                  <ArrowDown className="w-4 h-4 text-slate-500 dark:text-slate-400" /> Desc
                 </>
               )}
             </button>
@@ -107,7 +107,7 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
                 onSearchChange("");
                 onStatusChange("");
               }}
-              className="px-3 py-2 text-xs font-medium text-slate-400 hover:text-rose-400 transition cursor-pointer"
+              className="px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition cursor-pointer"
             >
               Reset Filters
             </button>
@@ -116,7 +116,7 @@ export const SearchFilter: React.FC<SearchFilterProps> = ({
           {/* Add New Application Button */}
           <button
             onClick={onAddNew}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-md shadow-lg shadow-blue-500/20 transition cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold rounded-md shadow-md shadow-blue-500/20 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Application
           </button>

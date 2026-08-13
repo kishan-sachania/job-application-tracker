@@ -1,5 +1,4 @@
 import { useReducer, useCallback } from "react";
-import axios from "axios";
 import {
   applicationsReducer,
   initialApplicationState,
@@ -15,6 +14,7 @@ import {
 import type { FetchApplicationsParams } from "../api/applications";
 import type { JobApplicationInput } from "../types";
 import { Status } from "../types";
+import { getErrorMessage } from "../utils/error";
 
 export const useApplications = () => {
   const [state, dispatch] = useReducer(
@@ -29,10 +29,7 @@ export const useApplications = () => {
         const data = await getApplicationsApi(params);
         dispatch({ type: ACTION_TYPES.SET_ALL, payload: data });
       } catch (err: unknown) {
-        const errMsg =
-          axios.isAxiosError(err) && err.response?.data?.message
-            ? String(err.response.data.message)
-            : "Failed to fetch job applications.";
+        const errMsg = getErrorMessage(err, "Failed to fetch job applications.");
         dispatch({
           type: ACTION_TYPES.SET_ERROR,
           payload: errMsg,
@@ -48,10 +45,7 @@ export const useApplications = () => {
       dispatch({ type: ACTION_TYPES.ADD, payload: created });
       return created;
     } catch (err: unknown) {
-      const errMsg =
-        axios.isAxiosError(err) && err.response?.data?.message
-          ? String(err.response.data.message)
-          : "Failed to create application.";
+      const errMsg = getErrorMessage(err, "Failed to create application.");
       dispatch({ type: ACTION_TYPES.SET_ERROR, payload: errMsg });
       throw new Error(errMsg);
     }
@@ -64,10 +58,7 @@ export const useApplications = () => {
         dispatch({ type: ACTION_TYPES.UPDATE, payload: updated });
         return updated;
       } catch (err: unknown) {
-        const errMsg =
-          axios.isAxiosError(err) && err.response?.data?.message
-            ? String(err.response.data.message)
-            : "Failed to update application.";
+        const errMsg = getErrorMessage(err, "Failed to update application.");
         dispatch({ type: ACTION_TYPES.SET_ERROR, payload: errMsg });
         throw new Error(errMsg);
       }
@@ -87,10 +78,7 @@ export const useApplications = () => {
       await deleteApplicationApi(id);
       dispatch({ type: ACTION_TYPES.DELETE, payload: id });
     } catch (err: unknown) {
-      const errMsg =
-        axios.isAxiosError(err) && err.response?.data?.message
-          ? String(err.response.data.message)
-          : "Failed to delete application.";
+      const errMsg = getErrorMessage(err, "Failed to delete application.");
       dispatch({ type: ACTION_TYPES.SET_ERROR, payload: errMsg });
       throw new Error(errMsg);
     }

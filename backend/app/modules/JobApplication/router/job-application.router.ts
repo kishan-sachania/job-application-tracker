@@ -10,7 +10,7 @@ const router = Router();
 
 router.get('/get-applications', getAllJobApplication)
 router.post('/apply', applyToJobApplication)
-router.patch('/update/:id', updateJobApplicationStatus)
+router.put('/update/:id', updateJobApplicationStatus)
 router.delete('/delete/:id', deleteJobApplication)
 
 export default router;
