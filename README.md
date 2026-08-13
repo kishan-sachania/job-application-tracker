@@ -116,8 +116,8 @@ cd client && npm install && cd ..
 Create a `.env` file inside the `server/` directory:
 
 ```env
-PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/job_tracker?retryWrites=true&w=majority
+PORT=3000
+MONGO_URI=your_mongoose_url
 JWT_ACCESS_SECRET=your_jwt_access_secret_key_here
 JWT_REFRESH_SECRET=your_jwt_refresh_secret_key_here
 CLIENT_URL=http://localhost:5173
@@ -127,7 +127,7 @@ CLIENT_URL=http://localhost:5173
 Create a `.env` file inside the `client/` directory:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:3000/api
 ```
 
 ---
@@ -141,15 +141,7 @@ npm run dev
 ```
 
 - **Frontend App**: [http://localhost:5173](http://localhost:5173)
-- **Backend API**: [http://localhost:5000/api](http://localhost:5000/api)
-
----
-
-## 🧪 Running API Tests via Postman
-
-1. Open **Postman**.
-2. Click **Import** and select `Job_Application_Tracker.postman_collection.json` located in the root directory.
-3. Run **`1. Register User`** or **`2. Login User`**. The collection test script automatically saves `accessToken`, `refreshToken`, `userId`, and `applicationId` into collection variables for all subsequent requests.
+- **Backend API**: [http://localhost:3000/api](http://localhost:3000/api)
 
 ---
 
