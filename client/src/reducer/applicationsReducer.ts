@@ -66,6 +66,12 @@ export const applicationsReducer = (
         loading: false,
       };
 
+    case ACTION_TYPES.SET_STATS:
+      return {
+        ...state,
+        stats: action.payload,
+      };
+
     default:
       return state;
   }

@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express";
-import { deleteApplication, getAllJobApplications, registerApplication, updateApplication } from "../services/job-application.service.js";
+import { deleteApplication, getAllJobApplications, getApplicationStats, registerApplication, updateApplication } from "../services/job-application.service.js";
 import ApiResponse from "../../../../utils/api-response.js";
 import { CustomError } from "../../../error-formates/error-formates.js";
 
@@ -18,6 +18,23 @@ const getParamsId = (req: Request) => {
     const paramsId = Array.isArray(id) ? id[0] : id;
     return paramsId;
 }
+
+// GET Stats
+const getJobApplicationStats = async (req: Request, res: Response) => {
+    try {
+        const userId = normalizeUserId(req);
+        if (!userId) {
+            return ApiResponse.error(res, "Missing user ID", 400);
+        }
+        const stats = await getApplicationStats(userId);
+        ApiResponse.success(res, "Stats fetched successfully", 200, stats);
+    } catch (error) {
+        if (error instanceof CustomError) {
+            return ApiResponse.error(res, error.message, error.statusCode);
+        }
+        return ApiResponse.error(res, "Internal server error", 500);
+    }
+};
 
 // GET
 const getAllJobApplication = async (req: Request, res: Response) => {
@@ -98,4 +115,4 @@ const deleteJobApplication = async (req: Request, res: Response) => {
     }
 }
 
-export { getAllJobApplication, applyToJobApplication, updateJobApplicationStatus, deleteJobApplication }
+export { getAllJobApplication, getJobApplicationStats, applyToJobApplication, updateJobApplicationStatus, deleteJobApplication }

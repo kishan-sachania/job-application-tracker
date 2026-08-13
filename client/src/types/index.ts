@@ -95,4 +95,5 @@ export type ApplicationAction =
   | { type: "UPDATE"; payload: JobApplication }
   | { type: "DELETE"; payload: string }
   | { type: "SET_LOADING"; payload: boolean }
-  | { type: "SET_ERROR"; payload: string | null };
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "SET_STATS"; payload: StatsResponse };

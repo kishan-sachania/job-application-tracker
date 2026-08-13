@@ -1,4 +1,3 @@
-import React from "react";
 import { Search, X, ArrowUp, ArrowDown, Plus } from "lucide-react";
 import { Status } from "../types";
 

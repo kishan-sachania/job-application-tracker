@@ -43,6 +43,32 @@ export const getAllJobApplications = async (userId: string, options: GetApplicat
     };
 }
 
+export const getApplicationStats = async (userId: string) => {
+    const uid = new Types.ObjectId(userId);
+    const [statusCounts, overdueFollowUps] = await Promise.all([
+        JobApplication.aggregate([
+            { $match: { userId: uid } },
+            { $group: { _id: '$status', count: { $sum: 1 } } },
+        ]),
+        JobApplication.countDocuments({
+            userId: uid,
+            status: { $ne: 'Closed' },
+            nextFollowUpDate: { $lte: new Date() },
+        }),
+    ]);
+
+    const counts: Record<string, number> = { Applied: 0, Screening: 0, Interview: 0, Offer: 0, Closed: 0 };
+    let total = 0;
+    statusCounts.forEach(({ _id, count }: any) => {
+        if (_id in counts) counts[_id] = count;
+        total += count;
+    });
+
+    const responseRate = total ? Math.round(((counts.Screening + counts.Interview + counts.Offer) / total) * 100) : 0;
+
+    return { counts, total, responseRate, overdueFollowUps };
+};
+
 
 export const registerApplication = async (userId: string, data: IJobApplication) => {
     if (!data.appliedDate) {

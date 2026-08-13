@@ -3,7 +3,6 @@ import type {
   JobApplication,
   JobApplicationInput,
   ApiResponse,
-  StatsResponse,
 } from "../types";
 import { Status } from "../types";
 
@@ -49,6 +48,11 @@ export const updateApplicationApi = async (
 
 export const deleteApplicationApi = async (id: string) => {
   await api.delete<ApiResponse<null>>(`/applications/${id}`);
+};
+
+export const getApplicationStatsApi = async () => {
+  const response = await api.get<ApiResponse<any>>("/applications/stats");
+  return response.data.data;
 };
 
 export const getStatsApi = (applications: JobApplication[] = []) => {

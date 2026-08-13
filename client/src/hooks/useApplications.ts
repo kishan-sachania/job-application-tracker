@@ -9,6 +9,7 @@ import {
   createApplicationApi,
   updateApplicationApi,
   deleteApplicationApi,
+  getApplicationStatsApi,
   getStatsApi,
 } from "../api/applications";
 import type { FetchApplicationsParams } from "../api/applications";
@@ -22,12 +23,29 @@ export const useApplications = () => {
     initialApplicationState
   );
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const statsData = await getApplicationStatsApi();
+      if (statsData) {
+        dispatch({ type: ACTION_TYPES.SET_STATS, payload: statsData });
+      }
+    } catch {
+      // Ignore stats fetch errors
+    }
+  }, []);
+
   const fetchApplications = useCallback(
     async (params?: FetchApplicationsParams) => {
       dispatch({ type: ACTION_TYPES.SET_LOADING, payload: true });
       try {
-        const data = await getApplicationsApi(params);
+        const [data, statsData] = await Promise.all([
+          getApplicationsApi(params),
+          getApplicationStatsApi().catch(() => null),
+        ]);
         dispatch({ type: ACTION_TYPES.SET_ALL, payload: data });
+        if (statsData) {
+          dispatch({ type: ACTION_TYPES.SET_STATS, payload: statsData });
+        }
       } catch (err: unknown) {
         const errMsg = getErrorMessage(err, "Failed to fetch job applications.");
         dispatch({
@@ -43,19 +61,21 @@ export const useApplications = () => {
     try {
       const created = await createApplicationApi(input);
       dispatch({ type: ACTION_TYPES.ADD, payload: created });
+      fetchStats();
       return created;
     } catch (err: unknown) {
       const errMsg = getErrorMessage(err, "Failed to create application.");
       dispatch({ type: ACTION_TYPES.SET_ERROR, payload: errMsg });
       throw new Error(errMsg);
     }
-  }, []);
+  }, [fetchStats]);
 
   const updateApplication = useCallback(
     async (id: string, input: Partial<JobApplicationInput>) => {
       try {
         const updated = await updateApplicationApi(id, input);
         dispatch({ type: ACTION_TYPES.UPDATE, payload: updated });
+        fetchStats();
         return updated;
       } catch (err: unknown) {
         const errMsg = getErrorMessage(err, "Failed to update application.");
@@ -63,7 +83,7 @@ export const useApplications = () => {
         throw new Error(errMsg);
       }
     },
-    []
+    [fetchStats]
   );
 
   const updateStatus = useCallback(
@@ -77,12 +97,13 @@ export const useApplications = () => {
     try {
       await deleteApplicationApi(id);
       dispatch({ type: ACTION_TYPES.DELETE, payload: id });
+      fetchStats();
     } catch (err: unknown) {
       const errMsg = getErrorMessage(err, "Failed to delete application.");
       dispatch({ type: ACTION_TYPES.SET_ERROR, payload: errMsg });
       throw new Error(errMsg);
     }
-  }, []);
+  }, [fetchStats]);
 
   const defaultStats = {
     counts: {

@@ -5,4 +5,5 @@ export const ACTION_TYPES = {
   DELETE: "DELETE",
   SET_LOADING: "SET_LOADING",
   SET_ERROR: "SET_ERROR",
+  SET_STATS: "SET_STATS",
 } as const;
